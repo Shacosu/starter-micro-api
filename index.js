@@ -6,6 +6,14 @@ import dbConnection from './sqllite.js';
 
 const resend = new Resend('re_4QCH2E8B_ELiNTXefjmMnYks95YrfFYo3');
 
+cronJob.schedule('*/5 * * * *', async () => {
+    await axios.get('https://clumsy-spider.cyclic.app/cron')
+}, {
+    timezone: "America/Santiago",
+    runOnInit: true
+});
+
+
 const getAnnouncements = async () => {
     const { data } = await axios.post(
         'https://udla.cl.api.mooestroviva.com/moofwd-rt/gateway.sjson',
@@ -58,15 +66,9 @@ const getAnnouncements = async () => {
 
 http.createServer(function (req, res) {
     if (req.url === '/cron') {
-        cronJob.schedule('*/5 * * * *', () => {
-            console.log("Running Cron Job")
-            console.log(new Date().toLocaleString())
-            getAnnouncements();
-        }, {
-            scheduled: true,
-            timezone: "America/Santiago",
-            runOnInit: true
-        });
+        console.log("Running Cron Job")
+        console.log(new Date().toLocaleString())
+        getAnnouncements();
     }
     res.end();
 }).listen(process.env.PORT || 3000);
