@@ -9,6 +9,7 @@ const resend = new Resend('re_4QCH2E8B_ELiNTXefjmMnYks95YrfFYo3');
 cronJob.schedule('*/5 * * * *', async () => {
     await axios.get('https://clumsy-spider.cyclic.app/cron')
 }, {
+    scheduled: true,
     timezone: "America/Santiago",
     runOnInit: true
 });
