@@ -31,7 +31,7 @@ const getAnnouncements = async () => {
         const SQLConn = await dbConnection();
         SQLConn.all('SELECT * FROM announcements', (err, rows) => {
             if (err) console.log(err);
-            console.log(`Notificaciones totales: ${rows.length}`)
+            console.log(`No tienes notificaciones pendientes.\nNotificaciones guardadas actualmente en la base de datos: ${rows.length}`)
             for (const ann of mappedAnnList) {
                 const isMatch = rows.some(el => el.id.toString() === ann.id.toString());
                 if (!isMatch) {
@@ -56,13 +56,17 @@ const getAnnouncements = async () => {
 }
 
 
-
-
 http.createServer(function (req, res) {
     if (req.url === '/cron') {
-        console.log("Running Cron Job")
-        console.log(new Date().toLocaleString())
-        getAnnouncements();
+        cronJob.schedule('*/5 * * * *', () => {
+            console.log("Running Cron Job")
+            console.log(new Date().toLocaleString())
+            getAnnouncements();
+        }, {
+            scheduled: true,
+            timezone: "America/Santiago",
+            runOnInit: true
+        });
     }
     res.end();
 }).listen(process.env.PORT || 3000);
